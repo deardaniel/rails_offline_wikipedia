@@ -11,27 +11,30 @@ Installation and database generation
 ------------------------------------
 
 Download rails_offline_wikipedia
+
     git clone git://github.com/deardaniel/rails_offline_wikipedia.git
 
 Download [enwiki-latest-pages-articles.xml.bz2](http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2) (over 7GB)
+
     wget -c http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
     
 Download and build `bzip-table`
+
   * Install Mercurial if you need to:
      * OS X: `easy_install Mercurial`
      * Ubuntu/Debian: `apt-get install mercurial`
      * Fedora/CentOS: `yum install mercurial`
   * Clone the repo:
-    hg clone https://bitbucket.org/james_taylor/seek-bzip2
+    `hg clone https://bitbucket.org/james_taylor/seek-bzip2`
   * Build
     ```bash
     cd seek-bzip2
     make
     ```
   * Copy the `bzip-table` binary to the `rails_offline_wikipedia/offline` folder.
-    cp bzip-table ../rails_offline_wikipedia/offline
+    `cp bzip-table ../rails_offline_wikipedia/offline`
   * Copy the `seek-bunzip` binary to the `rails_offline_wikipedia/lib/wiki_db` folder.
-    cp seek-bunzip ../rails_offline_wikipedia/lib/wiki_db
+    `cp seek-bunzip ../rails_offline_wikipedia/lib/wiki_db`
     
 Change to the offline folder.
     
@@ -71,9 +74,11 @@ Finally, check that all your files are in place by confirming that each file lis
 Starting the application
 ------------------------
 Change to the `rails_offline_wikipedia` directory. From where you cloned it:
+
     cd rails_offline_wikipedia
 
 Start the application
+
     rails wiki
     
 Visit http://localhost:3000/
