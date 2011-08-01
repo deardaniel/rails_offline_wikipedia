@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wiki</title>
+  <link rel="stylesheet" href="/stylesheets/blueprint/screen.css" type="text/css" media="screen, projection"> 
+  <link rel="stylesheet" href="/stylesheets/blueprint/print.css" type="text/css" media="print"> 
+  <!--[if lt IE 8]><link rel="stylesheet" href="/stylesheets/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+	<style type="text/css" media="screen">
+		body {
+			margin: 8px;
+		}
+		
+		table {
+			width: auto;
+		}
+		
+		span.editsection {
+			display: none;
+		}
+		
+		div.tright {
+			float: right;
+		}
+		
+		div.tleft {
+			float: left;
+		}
+		
+		div.thumbinner {
+			border: 1px solid #ccc;
+			background-color: #f9f9f9;
+			padding: 3px;
+			margin: 8px;
+			overflow: hidden;
+		}
+		
+		table.toc {
+			border: 1px solid #aaa;
+			background-color: #f9f9f9;
+			padding: 3px;
+			text-align: center;
+		}
+		
+		.toc ul {
+			list-style-image: none;
+			list-style-type: none;
+			margin: 0px;
+			padding-left: 0px;
+			text-align: left;
+		}
+		
+		ul.tocsection ul {
+			margin-left: 10px;
+		}
+	</style>
+  <%= stylesheet_link_tag :all %>
+	<link type="text/css" href="/stylesheets/smoothness/jquery-ui-1.8.8.custom.css" rel="stylesheet" />	
+  <%= javascript_include_tag :defaults %>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+
+<%= yield %>
+
+</body>
+</html>

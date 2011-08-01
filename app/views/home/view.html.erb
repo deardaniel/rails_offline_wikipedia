@@ -1,0 +1,79 @@
+<div id="tabs">
+	<div style="position: absolute; top: 6px; right: 8px;"><input id="search" placeholder="Search" style="padding: 2px; width: 200px; height: 19px; border-radius: 4px; border: 1px solid #aaa"></div>
+	<ul>
+		<li><a href="#page-html">Article</a></li>
+		<li><a href="#page-src">Source</a></li>
+		<li><a href="#page-templates">Fully Rendered</a></li>
+		<li><a href="#page-resources">Resources</a></li>
+	</ul>
+	<div id="page-html">
+		<%= raw @html %>
+	</div>
+	<div id="page-src">
+		<pre style="white-space: pre-wrap">
+			<%= @wiki %>
+		</pre>
+	</div>
+	<div id="page-templates">
+		<% if @templated %>
+			<%= raw @templated %>
+		<% else %>
+			<button id="load-templated" style="width: 200px" class="enabled">Load Content</button>
+		<% end %>
+	</div>
+	<div id="page-resources">
+		<% if !@resources.blank? %>
+		<ul>
+		  <% for resource in @resources %>
+		    <li class="<%= resource[:status] %>"><%= resource[:status] == "loaded" ? "Loaded" : "Loading" %> <b><%= resource[:name] %></b>
+		  <% end %>
+		</ul>
+		<% else %>
+		  <p>No resources to load.</p>
+		<% end %>
+	</div>
+</div>
+<script type="text/javascript" charset="utf-8">
+	$('#tabs').tabs()
+
+	<% if @templated %>
+		$('#tabs').tabs("option", "selected", 1);
+	<% end %>
+
+	$('#search').autocomplete({
+		source: "/search",
+		minLength: 3,
+		select: function( event, ui ) {
+			if (ui.item) location.href = "/"+ui.item.value
+		}
+	}).data('autocomplete')._renderItem = function( ul, item ) {
+		return $( "<li></li>" )
+			.data( "item.autocomplete", item )
+			.append( "<a>" + item.value + "</a>" )
+			.appendTo( ul );
+	};
+	
+	function reloadResources() {
+		$('#page-resources').load(location.href + " #page-resources>*", function(d) {
+			$(this).find('li.loaded').each(function(i,e) {
+				var r = $(e).find('b').text()
+				$('img[data-loaded="false"][src$="' + r + '"]').attr('src', '/File:'+r)
+			})
+			
+			if ($(this).find('li.not-loaded').length > 0) setTimeout("reloadResources()", 4000);
+		})
+	}
+
+	$(function() {
+		$('img').attr('data-loaded', 'false').load(function(e) { $(this).attr('data-loaded', 'true') })
+		
+		reloadResources()
+	
+		$('#load-templated').click(function(e) {
+			if (!$(this).hasClass('enabled')) return;
+
+			$(this).removeClass('enabled').html("Loading...")
+			$(this).parent().load(location.href + '?templated=true #page-templates>*')
+		})
+	})
+</script>

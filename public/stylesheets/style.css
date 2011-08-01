@@ -1,0 +1,34 @@
+
+button {
+	border-radius: 1.5em;
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EBEBEB), to(#A1A1A1));
+	padding: 0.5em 1em;
+	margin: 2em auto;
+	font-size: 16pt !important;
+	text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 2px;
+	color: #888;
+	text-align: center;
+	display: block;
+	border: none;
+}
+
+button.enabled {
+	color: #444;
+}
+
+button.enabled:hover {
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#04ACEC), to(#0186BA));
+	color: white;
+	text-shadow: rgba(0, 0, 0, 0.296875) 0px 1px 1px;
+}
+
+button.enabled:active {
+	background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#EBEBEB), to(#A1A1A1));
+	color: #444;
+	text-shadow: rgba(255, 255, 255, 0.796875) 0px 1px 0px;
+}
+
+.image img {
+	width: 100%;
+}

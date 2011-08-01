@@ -1,0 +1,83 @@
+rails_offline_wikipedia
+=======================
+
+*rails_offline_wikipedia* is an offline Wikipedia reader. It uses a local Rails application to present the content. A set of tools are provided to create an indexed database built from a wikipedia dump. The Rails app uses this indexed database to search article titles and quickly retrieve article content.
+
+The wikipedia dump is decompressed in a streaming fashion while the index is being created. It is never decompressed to disk: it remains as a single bzip2-compressed xml file. A bzip2 file is made of many blocks, and the `bzip2-seek` project's `bzip-table` tool is used to extract the bzip2 file's block's corresponding offsets in the XML data. By doing this, when the user requests a specific page, *only* the corresponding block (and perhaps the following block) need to be decompressed, and we can seek over the rest of the bzip2 file. This is very fast.
+
+Images are not downloaded with the dump, but images are downloaded from Wikipedia's servers when an Internet connection is available. These images are then cached so they remain accessible when the application is used offline. The cache size is unlimited and does not have an expiration policy (i.e., it's terribly simple).
+
+Installation and database generation
+------------------------------------
+
+Download rails_offline_wikipedia
+    git clone git://github.com/deardaniel/rails_offline_wikipedia.git
+
+Download [enwiki-latest-pages-articles.xml.bz2](http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2) (over 7GB)
+    wget -c http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
+    
+Download and build `bzip-table`
+  * Install Mercurial if you need to:
+     * OS X: `easy_install Mercurial`
+     * Ubuntu/Debian: `apt-get install mercurial`
+     * Fedora/CentOS: `yum install mercurial`
+  * Clone the repo:
+    hg clone https://bitbucket.org/james_taylor/seek-bzip2
+  * Build
+    ```bash
+    cd seek-bzip2
+    make
+    ```
+  * Copy the `bzip-table` binary to the `rails_offline_wikipedia/offline` folder.
+    cp bzip-table ../rails_offline_wikipedia/offline
+  * Copy the `seek-bunzip` binary to the `rails_offline_wikipedia/lib/wiki_db` folder.
+    cp seek-bunzip ../rails_offline_wikipedia/lib/wiki_db
+    
+Change to the offline folder.
+    
+    cd ../rails_offline_wikipedia/offline
+
+Parse the .xml.bz2 to an index of block start offsets (bit offset of block start in bz2 file) and sizes (of uncompressed block).
+
+	./bzip-table < enwiki-latest-pages-articles.xml.bz2 > wiki.bz2t
+	
+Add a third column to add the offset of the uncompressed data. This is a running total of the second column.
+	
+	cat wiki.bz2t | awk 'BEGIN { SUM = 0 } { print $1 " " $2 " " SUM ; SUM += $2 }' > wikidb.bz2t
+
+Parse the .xml.bz2 to an index of **page titles** with **page start offsets** in the XML file.
+
+	ruby parse_to_file.rb enwiki-latest-pages-articles.xml.bz2 > index.orig.tmp
+	
+Remove "Wikipedia:*" articles from the index (or indeed any articles you wish based on a regex of your choice)
+
+	grep -v '^Wikipedia:' index.orig.tmp > index.filtered.tmp
+
+Sort the index.
+
+	export LC_ALL='C'
+	sort -f < index.filtered.tmp > wikidb.index
+
+Create an index of the index. Index the first 3 characters of every title so searches can be done quickly.
+
+	ruby index_index.rb wikidb.index > wikidb.index_toc
+	
+Move your generated files to `lib/wiki_db`
+
+    mv wikidb.index_toc wikidb.index enwiki-latest-pages-articles.xml.bz2 ../lib/wiki_db    
+    
+Finally, check that all your files are in place by confirming that each file listed in `lib/wiki_db.rb` exists.
+
+Starting the application
+------------------------
+Change to the `rails_offline_wikipedia` directory. From where you cloned it:
+    cd rails_offline_wikipedia
+
+Start the application
+    rails wiki
+    
+Visit http://localhost:3000/
+
+Copyright
+---------
+Copyright (c) 2011 Daniel Heffernan. See LICENSE.txt for further details.
