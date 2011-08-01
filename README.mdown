@@ -10,7 +10,7 @@ Images are not downloaded with the dump, but images are downloaded from Wikipedi
 Installation and database generation
 ------------------------------------
 
-1.Download rails_offline_wikipedia
+1. Download rails_offline_wikipedia
 
     git clone git://github.com/deardaniel/rails_offline_wikipedia.git
 
@@ -29,6 +29,7 @@ Installation and database generation
     `hg clone https://bitbucket.org/james_taylor/seek-bzip2`
     
   * Build
+    
     ```bash
     cd seek-bzip2
     make
